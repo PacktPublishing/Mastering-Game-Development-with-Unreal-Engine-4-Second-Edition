@@ -56,6 +56,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	uint32 bUsingMotionControllers : 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	class UMasteringInventory *Inventory;
+
 protected:
 	
 	/** Fires a projectile. */
@@ -94,7 +97,9 @@ protected:
 	void EndTouch(const ETouchIndex::Type FingerIndex, const FVector Location);
 	void TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector Location);
 	TouchData	TouchItem;
-	
+
+	class AMasteringWeapon* EquippedWeaponActor;
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
@@ -114,5 +119,10 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+	/** Equip a weapon */
+	void EquipWeapon(TSubclassOf<class AMasteringWeapon> Weapon);
+
+	/** Get the currently equipped weapon */
+	FORCEINLINE class AMasteringWeapon* GetEquippedWeapon() const { return EquippedWeaponActor; };
 };
 

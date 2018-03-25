@@ -17,6 +17,7 @@ class MASTERING_API AMasteringWeapon : public AActor
 public:
 	AMasteringWeapon();
 
+public:
 	/** Gun muzzle's offset from the characters location */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	FVector GunOffset = FVector(100.0f, 0.0f, 10.0f);
@@ -40,5 +41,9 @@ public:
 	/** Muzzle offset */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USceneComponent* MuzzleLocation;
+
+public:
+	/** Fire the weapon */
+	void Fire(FRotator ControlRotation, class UAnimInstance* AnimInst);
 
 };
