@@ -34,11 +34,11 @@ public:
 	class UAnimMontage* FireAnimation;
 	
 	/** Our weapon skeletal mesh */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USkeletalMeshComponent* WeaponMesh;
 
 	/** Muzzle offset */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USceneComponent* MuzzleLocation;
 
 };
