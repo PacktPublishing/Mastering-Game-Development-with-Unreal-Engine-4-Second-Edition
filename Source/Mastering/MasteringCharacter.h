@@ -56,11 +56,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	uint32 bUsingMotionControllers : 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class UMasteringInventory *Inventory;
-
 protected:
-	
 	/** Fires a projectile. */
 	void OnFire();
 
@@ -100,6 +96,9 @@ protected:
 
 	class AMasteringWeapon* EquippedWeaponActor;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	class UMasteringInventory *Inventory;
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
@@ -124,5 +123,8 @@ public:
 
 	/** Get the currently equipped weapon */
 	FORCEINLINE class AMasteringWeapon* GetEquippedWeapon() const { return EquippedWeaponActor; };
+
+	/** Get this character's inventory */
+	FORCEINLINE class UMasteringInventory* GetInventory() const { return Inventory; }
 };
 

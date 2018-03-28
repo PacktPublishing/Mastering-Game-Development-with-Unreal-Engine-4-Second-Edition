@@ -44,6 +44,6 @@ public:
 
 public:
 	/** Fire the weapon */
-	void Fire(FRotator ControlRotation, class UAnimInstance* AnimInst);
+	void Fire(FRotator ControlRotation, class UAnimInstance* AnimInst, class UMasteringInventory* Inventory);
 
 };

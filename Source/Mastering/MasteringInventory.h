@@ -7,6 +7,23 @@
 #include "MasteringWeapon.h"
 #include "MasteringInventory.generated.h"
 
+USTRUCT()
+struct FWeaponProperties
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY()
+	TSubclassOf<class AMasteringWeapon> WeaponClass;
+
+	UPROPERTY()
+	int WeaponPower;
+
+	UPROPERTY()
+	int Ammo;
+};
+
 UCLASS( ClassGroup = (Custom), meta = (BlueprintSpawnableComponent) )
 class MASTERING_API UMasteringInventory : public UActorComponent
 {
@@ -25,18 +42,23 @@ public:
 	TSubclassOf<class AMasteringWeapon> DefaultWeapon;
 	
 	/** Choose the best weapon we can of those available */
-	void SelectBestWeapon(class AMasteringCharacter *Player);
+	void SelectBestWeapon();
 
 	/** Select a weapon from inventory */
-	void SelectWeapon(class AMasteringCharacter *Player, TSubclassOf<class AMasteringWeapon> Weapon);
+	void SelectWeapon(TSubclassOf<class AMasteringWeapon> Weapon);
 
 	/** Add a weapon to the inventory list */
-	void AddWeapon(TSubclassOf<class AMasteringWeapon> Weapon);
+	void AddWeapon(TSubclassOf<class AMasteringWeapon> Weapon, int AmmoCount, uint8 WeaponPower);
 
 	/** Get the currently selected weapon */
 	FORCEINLINE TSubclassOf<class AMasteringWeapon> GetCurrentWeapon() const { return CurrentWeapon; }
 
+	/** Change a weapon's ammo count, can't go below 0 or over 999 */
+	void ChangeAmmo(TSubclassOf<class AMasteringWeapon> Weapon, const int ChangeAmount);
+
 protected:
-	TArray<TSubclassOf<class AMasteringWeapon> > WeaponsArray;
+	TArray<FWeaponProperties> WeaponsArray;
 	TSubclassOf<class AMasteringWeapon> CurrentWeapon;
+	int CurrentWeaponPower = -1;
+	class AMasteringCharacter* MyOwner;
 };

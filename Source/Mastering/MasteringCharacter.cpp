@@ -63,7 +63,7 @@ void AMasteringCharacter::BeginPlay()
 	// Equip our best weapon on startup
 	if (Inventory != nullptr)
 	{
-		Inventory->SelectBestWeapon(this);
+		Inventory->SelectBestWeapon();
 	}
 }
 
@@ -106,7 +106,7 @@ void AMasteringCharacter::OnFire()
 	if (GetEquippedWeapon() != nullptr)
 	{
 		UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
-		GetEquippedWeapon()->Fire(GetControlRotation(), AnimInstance);
+		GetEquippedWeapon()->Fire(GetControlRotation(), AnimInstance, Inventory);
 	}
 }
 
@@ -231,6 +231,10 @@ void AMasteringCharacter::EquipWeapon(TSubclassOf<class AMasteringWeapon> Weapon
 
 	if (EquippedWeaponActor != nullptr)
 	{
+		// if already equipped, we have nothing else to do
+		if (EquippedWeaponActor->IsA(Weapon))
+			return;
+
 		World->DestroyActor(EquippedWeaponActor);
 	}
 
