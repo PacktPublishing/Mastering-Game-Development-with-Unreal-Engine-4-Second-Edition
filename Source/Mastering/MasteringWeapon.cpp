@@ -58,5 +58,6 @@ void AMasteringWeapon::Fire(FRotator ControlRotation, class UAnimInstance* AnimI
 		}
 	}
 
+	// reduce ammo by one
 	Inventory->ChangeAmmo(GetClass(), -1);
 }

@@ -56,6 +56,50 @@ void UMasteringInventory::SelectBestWeapon()
 void UMasteringInventory::SelectWeapon(TSubclassOf<class AMasteringWeapon> Weapon)
 {
 	MyOwner->EquipWeapon(Weapon);
+	CurrentWeapon = Weapon;
+}
+
+int UMasteringInventory::FindCurrentWeaponIndex() const
+{
+	int currentIndex = 0;
+	for (auto WeaponIt = WeaponsArray.CreateConstIterator(); WeaponIt; ++WeaponIt, ++currentIndex)
+	{
+		const FWeaponProperties &currentProps = *WeaponIt;
+		if (currentProps.WeaponClass == CurrentWeapon)
+			break;
+	}
+
+	checkSlow(currentIndex < WeaponsArray.Num());
+
+	return currentIndex;
+}
+
+void UMasteringInventory::SelectNextWeapon()
+{
+	int currentIndex = FindCurrentWeaponIndex();
+
+	if (currentIndex == WeaponsArray.Num() - 1) // we're at the end
+	{
+		SelectWeapon(WeaponsArray[0].WeaponClass);
+	}
+	else
+	{
+		SelectWeapon(WeaponsArray[currentIndex + 1].WeaponClass);
+	}
+}
+
+void UMasteringInventory::SelectPreviousWeapon()
+{
+	int currentIndex = FindCurrentWeaponIndex();
+
+	if (currentIndex > 0) // we're not at the start
+	{
+		SelectWeapon(WeaponsArray[currentIndex - 1].WeaponClass);
+	}
+	else
+	{
+		SelectWeapon(WeaponsArray[WeaponsArray.Num() - 1].WeaponClass); // select the last
+	}
 }
 
 void UMasteringInventory::AddWeapon(TSubclassOf<class AMasteringWeapon> Weapon, int AmmoCount, uint8 WeaponPower)

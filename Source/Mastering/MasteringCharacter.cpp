@@ -98,6 +98,10 @@ void AMasteringCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 	PlayerInputComponent->BindAxis("TurnRate", this, &AMasteringCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AMasteringCharacter::LookUpAtRate);
+
+	// Cycling inventory
+	PlayerInputComponent->BindAction("InventoryUp", IE_Pressed, this, &AMasteringCharacter::SelectNextWeapon);
+	PlayerInputComponent->BindAction("InventoryDown", IE_Pressed, this, &AMasteringCharacter::SelectPreviousWeapon);
 }
 
 void AMasteringCharacter::OnFire()
@@ -206,6 +210,16 @@ void AMasteringCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
+
+void AMasteringCharacter::SelectNextWeapon()
+{
+	Inventory->SelectNextWeapon();
+}
+
+void AMasteringCharacter::SelectPreviousWeapon()
+{
+	Inventory->SelectPreviousWeapon();
 }
 
 bool AMasteringCharacter::EnableTouchscreenMovement(class UInputComponent* PlayerInputComponent)
