@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MasteringInventoryDisplay.h"
-#include "MasteringInventory.h"
+#include "Inventory/MasteringInventory.h"
 
 
 void UMasteringInventoryDisplay::Init(class UMasteringInventory* Inventory)

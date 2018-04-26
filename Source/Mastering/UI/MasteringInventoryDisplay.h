@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "MasteringInventory.h"
+#include "Inventory/MasteringInventory.h"
 #include "MasteringInventoryDisplay.generated.h"
 
 /**

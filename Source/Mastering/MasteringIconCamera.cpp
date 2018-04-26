@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MasteringIconCamera.h"
-#include "MasteringWeapon.h"
-#include "MasteringWeaponPickup.h"
+#include "Inventory/MasteringWeapon.h"
+#include "Inventory/MasteringWeaponPickup.h"
 #include "Classes/Engine/AssetManager.h"
 #include "Classes/Engine/ObjectLibrary.h"
 #include "Classes/Engine/Blueprint.h"
