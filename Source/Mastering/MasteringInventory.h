@@ -7,20 +7,39 @@
 #include "MasteringWeapon.h"
 #include "MasteringInventory.generated.h"
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FWeaponProperties
 {
 	GENERATED_USTRUCT_BODY()
 
 public:
 
-	UPROPERTY()
+	FWeaponProperties() { };
+
+	FWeaponProperties(TSubclassOf<class AMasteringWeapon> Class, UTexture2D* Icon, int Power, int AmmoCount) :
+		WeaponClass(Class),
+		InventoryIcon(Icon),
+		WeaponPower(Power),
+		Ammo(AmmoCount)
+	{ }
+
+
+
+	bool operator==(const FWeaponProperties& Other) const
+	{
+		return Other.WeaponClass == WeaponClass;
+	}
+
+	UPROPERTY(BlueprintReadOnly)
 	TSubclassOf<class AMasteringWeapon> WeaponClass;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
+	class UTexture2D* InventoryIcon;
+
+	UPROPERTY(BlueprintReadOnly)
 	int WeaponPower;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	int Ammo;
 };
 
@@ -33,19 +52,17 @@ public:
 	// Sets default values for this component's properties
 	UMasteringInventory();
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class AMasteringWeapon> DefaultWeapon;
+	TSubclassOf<class AMasteringWeaponPickup> DefaultWeaponPickup;
 	
+	virtual void AddDefaultWeapon();
+
 	/** Choose the best weapon we can of those available */
 	void SelectBestWeapon();
 
 	/** Select a weapon from inventory */
-	void SelectWeapon(TSubclassOf<class AMasteringWeapon> Weapon);
+	void SelectWeapon(FWeaponProperties Weapon);
 
 	/** Find current weapon's index */
 	int FindCurrentWeaponIndex() const;
@@ -57,13 +74,22 @@ public:
 	void SelectPreviousWeapon();
 
 	/** Add a weapon to the inventory list */
-	void AddWeapon(TSubclassOf<class AMasteringWeapon> Weapon, int AmmoCount, uint8 WeaponPower);
+	void AddWeapon(const FWeaponProperties &Properties);
 
 	/** Get the currently selected weapon */
 	FORCEINLINE TSubclassOf<class AMasteringWeapon> GetCurrentWeapon() const { return CurrentWeapon; }
 
 	/** Change a weapon's ammo count, can't go below 0 or over 999 */
 	void ChangeAmmo(TSubclassOf<class AMasteringWeapon> Weapon, const int ChangeAmount);
+
+	DECLARE_EVENT_OneParam(UMasteringInventory, FSelectedWeaponChanged, FWeaponProperties);
+	FSelectedWeaponChanged OnSelectedWeaponChanged;
+
+	DECLARE_EVENT_OneParam(UMasteringInventory, FWeaponAdded, FWeaponProperties);
+	FSelectedWeaponChanged OnWeaponAdded;
+
+	DECLARE_EVENT_OneParam(UMasteringInventory, FWeaponRemoved, FWeaponProperties);
+	FSelectedWeaponChanged OnWeaponRemoved;
 
 protected:
 	TArray<FWeaponProperties> WeaponsArray;

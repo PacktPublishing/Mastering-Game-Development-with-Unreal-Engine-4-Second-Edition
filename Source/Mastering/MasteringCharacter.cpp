@@ -10,8 +10,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "MotionControllerComponent.h"
 #include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
-#include "MasteringInventory.h"
-#include "MasteringWeapon.h"
+#include "Inventory/MasteringInventory.h"
+#include "Inventory/MasteringWeapon.h"
+#include "UI/MasteringHUD.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -60,10 +61,11 @@ void AMasteringCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	// Equip our best weapon on startup
-	if (Inventory != nullptr)
+	AMasteringHUD* HUD = Cast<AMasteringHUD>(CastChecked<APlayerController>(GetController())->GetHUD());
+
+	if (HUD != nullptr)
 	{
-		Inventory->SelectBestWeapon();
+		HUD->InitializeInventory(Inventory);
 	}
 }
 

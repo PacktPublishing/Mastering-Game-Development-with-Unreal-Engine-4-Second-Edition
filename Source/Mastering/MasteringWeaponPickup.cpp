@@ -13,6 +13,22 @@ AMasteringWeaponPickup::AMasteringWeaponPickup()
 
 }
 
+void AMasteringWeaponPickup::HavePlayerPickup(class AMasteringCharacter* Player)
+{
+	UMasteringInventory *Inventory = Player->GetInventory();
+
+	FWeaponProperties Props(WeaponClass, InventoryIcon, WeaponPower, Ammunition);
+
+	Inventory->AddWeapon(Props);
+
+	// here we automatically select the best weapon which may have changed after adding the above,
+	// NOTE: this should probably be an option the player can turn on and off via UI
+	Inventory->SelectBestWeapon();
+
+	// and now that we've done our job, destroy ourselves
+	Destroy();
+}
+
 // Called when the game starts or when spawned
 void AMasteringWeaponPickup::BeginPlay()
 {
@@ -28,17 +44,8 @@ void AMasteringWeaponPickup::NotifyActorBeginOverlap(AActor* OtherActor)
 	{
 		return;
 	}
-
-	UMasteringInventory *Inventory = player->GetInventory();
 	
-	Inventory->AddWeapon(WeaponClass, Ammunition, WeaponPower);
-
-	// here we automatically select the best weapon which may have changed after adding the above,
-	// NOTE: this should probably be an option the player can turn on and off via UI
-	Inventory->SelectBestWeapon();
-
-	// and now that we've done our job, destroy ourselves
-	Destroy();
+	HavePlayerPickup(player);
 }
 
 // Called every frame
