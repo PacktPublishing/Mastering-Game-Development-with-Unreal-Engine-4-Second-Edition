@@ -101,18 +101,18 @@ void UMainMenuWidget::SaveGame()
 		SavedActors.Add(ActorRecord);
 	}
 
-	FBufferArchive BinaryData;
+	FBufferArchive SaveData;
 
 	SaveGameData.SavedActors = SavedActors;
 
-	BinaryData << SaveGameData;
+	SaveData << SaveGameData;
 
 	FString outPath = FPaths::ProjectSavedDir() + SaveGameData.Timestamp.ToString() + TEXT(".sav");
 
-	FFileHelper::SaveArrayToFile(BinaryData, *outPath);
+	FFileHelper::SaveArrayToFile(SaveData, *outPath);
 
-	BinaryData.FlushCache();
-	BinaryData.Empty();
+	SaveData.FlushCache();
+	SaveData.Empty();
 
 	APlayerController* playerController = World->GetFirstPlayerController();
 	if (playerController)

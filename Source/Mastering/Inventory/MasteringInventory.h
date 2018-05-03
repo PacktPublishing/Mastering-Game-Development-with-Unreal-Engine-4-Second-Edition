@@ -93,33 +93,6 @@ public:
 	DECLARE_EVENT_OneParam(UMasteringInventory, FWeaponRemoved, FWeaponProperties);
 	FSelectedWeaponChanged OnWeaponRemoved;
 
-	/*friend FArchive& operator<<(FArchive &Ar, UMasteringInventory& Inv)
-	{
-		Ar << Inv.CurrentWeapon;
-		Ar << Inv.CurrentWeaponPower;
-		Ar << Inv.WeaponsArray;
-
-		if (Ar.IsLoading())
-		{
-			for (int i = 0; i < WeaponsArray.Num(); ++i)
-			{
-				Ar << Inv.WeaponsArray[i].WeaponClass;
-				Ar << Inv.WeaponsArray[i].WeaponPower;
-				Ar << Inv.WeaponsArray[i].Ammo;
-				Ar << Inv.WeaponsArray[i].InventoryIcon;
-			}
-		}
-		for (int i = 0; i < Inv.WeaponsArray.Num(); ++i)
-		{
-			Ar << Inv.WeaponsArray[i].WeaponClass;
-			Ar << Inv.WeaponsArray[i].WeaponPower;
-			Ar << Inv.WeaponsArray[i].Ammo;
-			Ar << Inv.WeaponsArray[i].InventoryIcon;
-		}
-
-		return Ar;
-	}*/
-
 protected:
 	UPROPERTY()
 	TArray<FWeaponProperties> WeaponsArray;
