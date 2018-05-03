@@ -61,12 +61,7 @@ void AMasteringCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	AMasteringHUD* HUD = Cast<AMasteringHUD>(CastChecked<APlayerController>(GetController())->GetHUD());
-
-	if (HUD != nullptr)
-	{
-		HUD->InitializeInventory(Inventory);
-	}
+	InitializeInventoryHUD();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -104,6 +99,8 @@ void AMasteringCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 	// Cycling inventory
 	PlayerInputComponent->BindAction("InventoryUp", IE_Pressed, this, &AMasteringCharacter::SelectNextWeapon);
 	PlayerInputComponent->BindAction("InventoryDown", IE_Pressed, this, &AMasteringCharacter::SelectPreviousWeapon);
+
+	PlayerInputComponent->BindAction("ToggleMainMenu", IE_Pressed, this, &AMasteringCharacter::ToggleMainMenu);
 }
 
 void AMasteringCharacter::OnFire()
@@ -144,6 +141,33 @@ void AMasteringCharacter::EndTouch(const ETouchIndex::Type FingerIndex, const FV
 		OnFire();
 	}
 	TouchItem.bIsPressed = false;
+}
+
+void AMasteringCharacter::ToggleMainMenu()
+{
+	AMasteringHUD* HUD = Cast<AMasteringHUD>(CastChecked<APlayerController>(GetController())->GetHUD());
+	if (HUD != nullptr)
+	{
+		HUD->ToggleMainMenu();
+	}
+}
+
+void AMasteringCharacter::SetInventory(UMasteringInventory* Inv)
+{
+	Inventory = Inv;
+	InitializeInventoryHUD();
+}
+
+void AMasteringCharacter::InitializeInventoryHUD()
+{
+	APlayerController* player = CastChecked<APlayerController>(GetController());
+
+	AMasteringHUD* HUD = Cast<AMasteringHUD>(player->GetHUD());
+
+	if (HUD != nullptr)
+	{
+		HUD->InitializeInventory(Inventory);
+	}
 }
 
 //Commenting this section out to be consistent with FPS BP template.

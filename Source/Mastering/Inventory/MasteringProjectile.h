@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "MasteringProjectile.generated.h"
 
-UCLASS(config=Game)
+UCLASS(config=Game, transient)
 class AMasteringProjectile : public AActor
 {
 	GENERATED_BODY()

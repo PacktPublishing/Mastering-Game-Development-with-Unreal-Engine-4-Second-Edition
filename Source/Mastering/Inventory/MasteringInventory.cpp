@@ -57,6 +57,8 @@ void UMasteringInventory::SelectBestWeapon()
 
 void UMasteringInventory::SelectWeapon(FWeaponProperties Weapon)
 {
+	checkf(Weapon.WeaponClass != nullptr, TEXT("Weapon equip attempted with null class!"));
+
 	OnSelectedWeaponChanged.Broadcast(Weapon);
 
 	MyOwner->EquipWeapon(Weapon.WeaponClass);

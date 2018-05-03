@@ -23,8 +23,6 @@ public:
 		Ammo(AmmoCount)
 	{ }
 
-
-
 	bool operator==(const FWeaponProperties& Other) const
 	{
 		return Other.WeaponClass == WeaponClass;
@@ -79,6 +77,10 @@ public:
 	/** Get the currently selected weapon */
 	FORCEINLINE TSubclassOf<class AMasteringWeapon> GetCurrentWeapon() const { return CurrentWeapon; }
 
+	FORCEINLINE TArray<FWeaponProperties>& GetWeaponsArray() { return WeaponsArray; }
+
+	FORCEINLINE int GetCurrentWeaponPower() const { return CurrentWeaponPower;  }
+
 	/** Change a weapon's ammo count, can't go below 0 or over 999 */
 	void ChangeAmmo(TSubclassOf<class AMasteringWeapon> Weapon, const int ChangeAmount);
 
@@ -91,9 +93,42 @@ public:
 	DECLARE_EVENT_OneParam(UMasteringInventory, FWeaponRemoved, FWeaponProperties);
 	FSelectedWeaponChanged OnWeaponRemoved;
 
+	/*friend FArchive& operator<<(FArchive &Ar, UMasteringInventory& Inv)
+	{
+		Ar << Inv.CurrentWeapon;
+		Ar << Inv.CurrentWeaponPower;
+		Ar << Inv.WeaponsArray;
+
+		if (Ar.IsLoading())
+		{
+			for (int i = 0; i < WeaponsArray.Num(); ++i)
+			{
+				Ar << Inv.WeaponsArray[i].WeaponClass;
+				Ar << Inv.WeaponsArray[i].WeaponPower;
+				Ar << Inv.WeaponsArray[i].Ammo;
+				Ar << Inv.WeaponsArray[i].InventoryIcon;
+			}
+		}
+		for (int i = 0; i < Inv.WeaponsArray.Num(); ++i)
+		{
+			Ar << Inv.WeaponsArray[i].WeaponClass;
+			Ar << Inv.WeaponsArray[i].WeaponPower;
+			Ar << Inv.WeaponsArray[i].Ammo;
+			Ar << Inv.WeaponsArray[i].InventoryIcon;
+		}
+
+		return Ar;
+	}*/
+
 protected:
+	UPROPERTY()
 	TArray<FWeaponProperties> WeaponsArray;
+	
+	UPROPERTY()
 	TSubclassOf<class AMasteringWeapon> CurrentWeapon;
+	
+	UPROPERTY()
 	int CurrentWeaponPower = -1;
+
 	class AMasteringCharacter* MyOwner;
 };
