@@ -24,27 +24,54 @@ public:
 	UFUNCTION(BlueprintCallable)
 	class AMasteringCharacter* GetTarget();
 
+	UFUNCTION(BlueprintCallable)
+	void SetReturningHome();
+
+	UFUNCTION(BlueprintCallable)
+	void OnReturnedHome();
+
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
+	UPROPERTY(BlueprintReadOnly, Category = "Targeting")
 	class USphereComponent* HearingSphere;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
-	float HearingRadius = 1000.0f;
+	UPROPERTY(BlueprintReadOnly, Category = "Targeting")
+	class USphereComponent* StealthHearingSphere;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Targeting")
+	class USphereComponent* SightSphere;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
-	float SightRadius = 2000.0f;
+	float HearingRadius = 600.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
-	float SightAngle = 60.0f;
+	float StealthHearingRadius = 150.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
-	float BreakoffRadius = 1500.0f;
+	float SightRadius = 1800.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
+	float SightAngle = 75.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
+	float AttackRadius = 120.0f;
 
 protected:
+
 	UFUNCTION()
 	void OnHearingOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION()
+	void OnStealthHearingOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnSightOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	void SetPotentialTarget(AActor* Other);
+
 	UPROPERTY()
 	AMasteringCharacter* CurrentTarget = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	FVector HomeLocation;
 };

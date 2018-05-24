@@ -2,6 +2,7 @@
 
 #include "MeleeAIController.h"
 #include "MasteringCharacter.h"
+#include "StealthCharacter.h"
 #include "Components/SphereComponent.h"
 
 
@@ -10,11 +11,21 @@ AMeleeAIController::AMeleeAIController(const FObjectInitializer& ObjectInitializ
 	: Super(ObjectInitializer)
 {
 	HearingSphere = CreateDefaultSubobject<USphereComponent>(TEXT("HearingSphere"));
-	HearingSphere->InitSphereRadius(HearingRadius);
 	HearingSphere->SetCollisionObjectType(ECC_Pawn);
 	HearingSphere->SetCollisionProfileName("OverlapOnlyPawn");
-
 	HearingSphere->OnComponentBeginOverlap.AddDynamic(this, &AMeleeAIController::OnHearingOverlap);
+
+	StealthHearingSphere = CreateDefaultSubobject<USphereComponent>(TEXT("StealthHearingSphere"));
+	StealthHearingSphere->SetCollisionObjectType(ECC_Pawn);
+	StealthHearingSphere->SetCollisionProfileName("OverlapOnlyPawn");
+	StealthHearingSphere->OnComponentBeginOverlap.AddDynamic(this, &AMeleeAIController::OnStealthHearingOverlap);
+
+	SightSphere = CreateDefaultSubobject<USphereComponent>(TEXT("SightSphere"));
+	SightSphere->SetCollisionObjectType(ECC_Pawn);
+	SightSphere->SetCollisionProfileName("OverlapOnlyPawn");
+	SightSphere->OnComponentBeginOverlap.AddDynamic(this, &AMeleeAIController::OnSightOverlap);
+
+	SetReturningHome();
 
 	bAttachToPawn = true;
 }
@@ -25,17 +36,91 @@ class AMasteringCharacter* AMeleeAIController::GetTarget()
 	return CurrentTarget;
 }
 
+void AMeleeAIController::SetReturningHome()
+{
+	HearingSphere->SetSphereRadius(0.0f);
+	StealthHearingSphere->SetSphereRadius(0.0f);
+	SightSphere->SetSphereRadius(0.0f);
+
+	CurrentTarget = nullptr;
+}
+
+void AMeleeAIController::OnReturnedHome()
+{
+	HearingSphere->SetSphereRadius(HearingRadius);
+	StealthHearingSphere->SetSphereRadius(StealthHearingRadius);
+	SightSphere->SetSphereRadius(SightRadius);
+}
+
 void AMeleeAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	HomeLocation = GetPawn()->GetNavAgentLocation();
+
 	HearingSphere->AttachTo(this->GetRootComponent(), NAME_None, EAttachLocation::SnapToTarget);
+	StealthHearingSphere->AttachTo(this->GetRootComponent(), NAME_None, EAttachLocation::SnapToTarget);
+	SightSphere->AttachTo(this->GetRootComponent(), NAME_None, EAttachLocation::SnapToTarget);
+
+	OnReturnedHome();
 }
 
 void AMeleeAIController::OnHearingOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AMasteringCharacter *Target = Cast<AMasteringCharacter>(Other);
-	if (CurrentTarget != nullptr || CurrentTarget != Target)
+	AStealthCharacter* StealthChar = Cast<AStealthCharacter>(Other);
+	if (StealthChar != nullptr)
+	{
+		if (StealthChar->IsStealthed())
+		{
+			return; // we let the stealthed sphere deal with these
+		}
+	}
+
+	SetPotentialTarget(Other);
+}
+
+void AMeleeAIController::OnStealthHearingOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	SetPotentialTarget(Other);
+}
+
+void AMeleeAIController::OnSightOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	APawn* Owner = GetPawn();
+
+	if (Owner == Other)
+	{
+		return;
+	}
+
+	FVector ToTarget = Other->GetActorLocation() - Owner->GetActorLocation();
+	FVector Facing = GetPawn()->GetActorForwardVector();
+
+	if (SightAngle > 90.0f)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Sight Angles of 90+ degrees not supported, please use hearing for this detection!"));
+		SightAngle = 90.0f;
+	}
+
+	if (FVector::DotProduct(ToTarget, Facing) < 0.0f)
+	{
+		return;
+	}
+
+	float DotToTarget = FVector::DotProduct(ToTarget.GetSafeNormal(), Facing.GetSafeNormal());
+	float RadiansToTarget = FMath::Acos(DotToTarget);
+	float AngToTarget = RadiansToTarget * 180.0f / PI;
+
+	if (AngToTarget < SightAngle)
+	{
+		SetPotentialTarget(Other);
+	}
+}
+
+void AMeleeAIController::SetPotentialTarget(AActor* Other)
+{
+	AMasteringCharacter* Target = Cast<AMasteringCharacter>(Other);
+	if (Target != nullptr && CurrentTarget != Target)
 	{
 		CurrentTarget = Target;
 		OnTargetChange(CurrentTarget);
