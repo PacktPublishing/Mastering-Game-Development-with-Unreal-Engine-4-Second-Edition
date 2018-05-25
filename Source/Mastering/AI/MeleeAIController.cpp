@@ -12,17 +12,17 @@ AMeleeAIController::AMeleeAIController(const FObjectInitializer& ObjectInitializ
 {
 	HearingSphere = CreateDefaultSubobject<USphereComponent>(TEXT("HearingSphere"));
 	HearingSphere->SetCollisionObjectType(ECC_Pawn);
-	HearingSphere->SetCollisionProfileName("OverlapOnlyPawn");
+	HearingSphere->SetCollisionProfileName("Trigger");
 	HearingSphere->OnComponentBeginOverlap.AddDynamic(this, &AMeleeAIController::OnHearingOverlap);
 
 	StealthHearingSphere = CreateDefaultSubobject<USphereComponent>(TEXT("StealthHearingSphere"));
 	StealthHearingSphere->SetCollisionObjectType(ECC_Pawn);
-	StealthHearingSphere->SetCollisionProfileName("OverlapOnlyPawn");
+	StealthHearingSphere->SetCollisionProfileName("Trigger");
 	StealthHearingSphere->OnComponentBeginOverlap.AddDynamic(this, &AMeleeAIController::OnStealthHearingOverlap);
 
 	SightSphere = CreateDefaultSubobject<USphereComponent>(TEXT("SightSphere"));
 	SightSphere->SetCollisionObjectType(ECC_Pawn);
-	SightSphere->SetCollisionProfileName("OverlapOnlyPawn");
+	SightSphere->SetCollisionProfileName("Trigger");
 	SightSphere->OnComponentBeginOverlap.AddDynamic(this, &AMeleeAIController::OnSightOverlap);
 
 	SetReturningHome();
@@ -58,9 +58,9 @@ void AMeleeAIController::BeginPlay()
 
 	HomeLocation = GetPawn()->GetNavAgentLocation();
 
-	HearingSphere->AttachTo(this->GetRootComponent(), NAME_None, EAttachLocation::SnapToTarget);
-	StealthHearingSphere->AttachTo(this->GetRootComponent(), NAME_None, EAttachLocation::SnapToTarget);
-	SightSphere->AttachTo(this->GetRootComponent(), NAME_None, EAttachLocation::SnapToTarget);
+    HearingSphere->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+    StealthHearingSphere->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+    SightSphere->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 
 	OnReturnedHome();
 }

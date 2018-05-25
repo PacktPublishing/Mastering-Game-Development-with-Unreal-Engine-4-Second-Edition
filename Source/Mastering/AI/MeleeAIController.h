@@ -32,13 +32,13 @@ public:
 
 	virtual void BeginPlay() override;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Targeting")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting")
 	class USphereComponent* HearingSphere;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Targeting")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting")
 	class USphereComponent* StealthHearingSphere;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Targeting")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting")
 	class USphereComponent* SightSphere;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
