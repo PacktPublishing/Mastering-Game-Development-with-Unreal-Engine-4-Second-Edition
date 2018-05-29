@@ -79,6 +79,8 @@ void UMainMenuWidget::SaveGame()
 		FSaveGameArchive Ar(MemoryWriter);
 		AMasteringCharacter* Mast = Cast<AMasteringCharacter>(Actor);
 
+		ISavedActorInterface::Execute_ActorSaved(Actor);
+
 		Actor->Serialize(Ar);
 
 		if (Mast != nullptr)

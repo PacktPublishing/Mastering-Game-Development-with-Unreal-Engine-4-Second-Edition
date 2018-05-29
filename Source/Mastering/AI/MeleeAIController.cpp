@@ -30,6 +30,18 @@ AMeleeAIController::AMeleeAIController(const FObjectInitializer& ObjectInitializ
 	bAttachToPawn = true;
 }
 
+void AMeleeAIController::Possess(APawn* InPawn)
+{
+	Super::Possess(InPawn);
+
+	HomeLocation = GetPawn()->GetNavAgentLocation();
+
+	HearingSphere->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	StealthHearingSphere->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	SightSphere->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+
+	OnReturnedHome();
+}
 
 class AMasteringCharacter* AMeleeAIController::GetTarget()
 {
@@ -50,19 +62,6 @@ void AMeleeAIController::OnReturnedHome()
 	HearingSphere->SetSphereRadius(HearingRadius);
 	StealthHearingSphere->SetSphereRadius(StealthHearingRadius);
 	SightSphere->SetSphereRadius(SightRadius);
-}
-
-void AMeleeAIController::BeginPlay()
-{
-	Super::BeginPlay();
-
-	HomeLocation = GetPawn()->GetNavAgentLocation();
-
-    HearingSphere->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-    StealthHearingSphere->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-    SightSphere->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-
-	OnReturnedHome();
 }
 
 void AMeleeAIController::OnHearingOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -88,7 +87,7 @@ void AMeleeAIController::OnSightOverlap(UPrimitiveComponent* OverlappedComp, AAc
 {
 	APawn* Owner = GetPawn();
 
-	if (Owner == Other)
+	if (Owner == nullptr || Owner == Other)
 	{
 		return;
 	}

@@ -34,10 +34,21 @@ AMasteringProjectile::AMasteringProjectile()
 void AMasteringProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
+	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL))
 	{
-		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+		AController* controller = GetInstigatorController();
+		AActor* damager = GetInstigator();
+		FDamageEvent DamEvt;
 
-		Destroy();
+		OtherActor->TakeDamage(DamageAmount, DamEvt, controller, damager != nullptr ? damager : this);
+
+		if (OtherComp->IsSimulatingPhysics())
+		{
+			OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+		}
+		else if (Cast<APawn>(OtherActor) != nullptr)
+		{
+			Destroy();
+		}
 	}
 }

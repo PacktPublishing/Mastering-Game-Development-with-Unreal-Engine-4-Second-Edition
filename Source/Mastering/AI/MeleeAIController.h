@@ -21,6 +21,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnTargetChange(class AMasteringCharacter* Target);
 
+	virtual void Possess(APawn* InPawn) override;
+
 	UFUNCTION(BlueprintCallable)
 	class AMasteringCharacter* GetTarget();
 
@@ -29,8 +31,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void OnReturnedHome();
-
-	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting")
 	class USphereComponent* HearingSphere;
@@ -56,6 +56,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
 	float AttackRadius = 120.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame, Category = "Health")
+	float Health = 100.0f;
+	
 protected:
 
 	UFUNCTION()
@@ -67,6 +70,7 @@ protected:
 	UFUNCTION()
 	void OnSightOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION(BlueprintCallable)
 	void SetPotentialTarget(AActor* Other);
 
 	UPROPERTY()
