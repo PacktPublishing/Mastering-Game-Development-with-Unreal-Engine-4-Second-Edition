@@ -1,7 +1,7 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "MasteringGameMode.h"
-#include "MasteringHUD.h"
+#include "UI/MasteringHUD.h"
 #include "MasteringCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 

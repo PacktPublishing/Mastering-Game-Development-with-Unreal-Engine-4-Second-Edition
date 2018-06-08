@@ -56,6 +56,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	uint32 bUsingMotionControllers : 1;
 
+	virtual void SetInventory(class UMasteringInventory* Inv);
+
+	virtual void InitializeInventoryHUD();
+
 protected:
 	/** Fires a projectile. */
 	void OnFire();
@@ -99,6 +103,9 @@ protected:
 	void TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector Location);
 	TouchData	TouchItem;
 
+	virtual void ToggleMainMenu();
+
+	UPROPERTY()
 	class AMasteringWeapon* EquippedWeaponActor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
