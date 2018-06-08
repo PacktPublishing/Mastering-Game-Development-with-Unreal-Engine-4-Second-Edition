@@ -146,3 +146,40 @@ void UMasteringInventory::ChangeAmmo(TSubclassOf<class AMasteringWeapon> Weapon,
 		}
 	}
 }
+
+void UMasteringInventory::CopyFromOther(UMasteringInventory *Other, class AMasteringCharacter* ownerOverride /* = nullptr */)
+{
+	Reset();
+
+	TArray<FWeaponProperties>& otherProps = Other->GetWeaponsArray();
+	for (auto prop : otherProps)
+	{
+		WeaponsArray.Add(prop);
+	}
+
+	DefaultWeaponPickup = Other->DefaultWeaponPickup;
+	CurrentWeapon = Other->GetCurrentWeapon();
+	CurrentWeaponPower = Other->GetCurrentWeaponPower();
+	MyOwner = ownerOverride == nullptr ? Other->GetOwningCharacter() : ownerOverride;
+}
+
+void UMasteringInventory::Reset()
+{
+	WeaponsArray.Empty();
+	CurrentWeapon = nullptr;
+	CurrentWeaponPower = -1;
+	MyOwner = nullptr;
+}
+
+void UMasteringInventory::SetupToCurrent()
+{
+	for (auto WeaponIt = WeaponsArray.CreateConstIterator(); WeaponIt; ++WeaponIt)
+	{
+		const FWeaponProperties &currentProps = *WeaponIt;
+		OnWeaponAdded.Broadcast(currentProps);
+		if (currentProps.WeaponClass == CurrentWeapon)
+		{
+			SelectWeapon(currentProps);
+		}
+	}
+}

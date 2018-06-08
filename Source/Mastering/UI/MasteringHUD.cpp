@@ -6,6 +6,7 @@
 #include "TextureResource.h"
 #include "CanvasItem.h"
 #include "UObject/ConstructorHelpers.h"
+#include "LoadSaveLibrary.h"
 #include "MasteringInventoryDisplay.h"
 #include "MainMenuWidget.h"
 
@@ -31,7 +32,7 @@ void AMasteringHUD::BeginPlay()
 
 		MainMenu->AddToViewport();
 
-		MainMenu->OnGameLoadedFixup(GetWorld());
+		LoadSaveLibrary::OnGameLoadedFixup(GetWorld());
 		MainMenu->Close();
 	}
 }

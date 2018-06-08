@@ -81,6 +81,8 @@ public:
 
 	FORCEINLINE int GetCurrentWeaponPower() const { return CurrentWeaponPower;  }
 
+	FORCEINLINE class AMasteringCharacter* GetOwningCharacter() const { return MyOwner; }
+
 	/** Change a weapon's ammo count, can't go below 0 or over 999 */
 	void ChangeAmmo(TSubclassOf<class AMasteringWeapon> Weapon, const int ChangeAmount);
 
@@ -92,6 +94,12 @@ public:
 
 	DECLARE_EVENT_OneParam(UMasteringInventory, FWeaponRemoved, FWeaponProperties);
 	FSelectedWeaponChanged OnWeaponRemoved;
+
+	void CopyFromOther(UMasteringInventory *Other, class AMasteringCharacter* ownerOverride = nullptr);
+
+	void Reset();
+
+	void SetupToCurrent();
 
 protected:
 	UPROPERTY()
