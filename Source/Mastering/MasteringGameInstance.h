@@ -32,7 +32,30 @@ public:
 		bPersistPlayerInventory = bPersist;
 	}
 
+	void SetPlayerInventory(class UMasteringInventory* Inv);
+
+	FORCEINLINE class UMasteringInventory* GetInventory() const
+	{
+		return PlayerInv;
+	}
+
+	void SetPlayerSafeLocation(const FVector& InLoc)
+	{
+		PlayerSafeLocation = InLoc;
+	}
+
+	FORCEINLINE FVector GetPlayerSafeLocation() const
+	{
+		return PlayerSafeLocation;
+	}
+
+	void ClearData();
+
 protected:
 
+	UPROPERTY()
+	class UMasteringInventory* PlayerInv;
+
 	bool bPersistPlayerInventory;
+	FVector PlayerSafeLocation;
 };

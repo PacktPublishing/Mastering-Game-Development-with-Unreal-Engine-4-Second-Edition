@@ -1,13 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MainMenuWidget.h"
-#include "Kismet/GameplayStatics.h"
-#include "Serialization/BufferArchive.h"
-#include "Serialization/MemoryReader.h"
-#include "Misc/Paths.h"
 #include "HAL/FileManager.h"
+#include "Kismet/GameplayStatics.h"
 #include "LoadSaveLibrary.h"
-#include "SavedActorInterface.h"
+#include "MasteringGameInstance.h"
 #include "SavedActorInterface.h"
 
 #include "MasteringCharacter.h"
@@ -15,6 +12,11 @@
 void UMainMenuWidget::LoadGame(FString SaveFile)
 {
 	UWorld *World = GetWorld();
+
+	UMasteringGameInstance* gameInst = UMasteringGameInstance::GetInstance();
+	check(gameInst != nullptr);
+
+	gameInst->ClearData();
 
 	LoadSaveLibrary::LoadGameFile(SaveFile, World);
 }

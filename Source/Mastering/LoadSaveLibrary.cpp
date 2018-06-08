@@ -8,6 +8,7 @@
 #include "HAL/FileManager.h"
 #include "LoadSaveLibrary.h"
 #include "UI/SavedActorInterface.h"
+#include "MasteringGameInstance.h"
 
 #include "MasteringCharacter.h"
 
@@ -40,11 +41,15 @@ void LoadSaveLibrary::LoadGameFile(FString SaveFile, UWorld* World)
 	FromBinary.FlushCache();
 	FromBinary.Close();
 
+	UMasteringGameInstance* gameInst = UMasteringGameInstance::GetInstance();
+	FVector playerSafeLoc = SaveGameData.PlayerSafeLocation;
+	gameInst->SetPlayerSafeLocation(playerSafeLoc);
+
 	FString mapName = SaveGameData.MapName.ToString();
 
 	FString currentMapName = World->GetMapName();
 
-	currentMapName.Split("_", nullptr, &currentMapName, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+	currentMapName.Split("UEDPIE_0_", nullptr, &currentMapName);
 
 	if (mapName == currentMapName)
 	{
@@ -52,7 +57,7 @@ void LoadSaveLibrary::LoadGameFile(FString SaveFile, UWorld* World)
 	}
 	else
 	{
-		UGameplayStatics::OpenLevel(World, *mapName, true);
+		UGameplayStatics::OpenLevel(World, *mapName);
 	}
 }
 
@@ -60,14 +65,19 @@ void LoadSaveLibrary::SaveGameFile(FString SaveFile, UWorld* World)
 {
 	checkSlow(World != nullptr);
 	FGameSavedData SaveGameData;
+	FString outPath = FPaths::ProjectSavedDir() + SaveFile;
 
 	SaveGameData.Timestamp = FDateTime::Now();
 
 	FString mapName = World->GetMapName();
 
-	mapName.Split("_", nullptr, &mapName, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+	mapName.Split("UEDPIE_0_", nullptr, &mapName);
 
 	SaveGameData.MapName = *mapName;
+
+	UMasteringGameInstance* gameInst = UMasteringGameInstance::GetInstance();
+	SaveGameData.PlayerSafeLocation = gameInst->GetPlayerSafeLocation();
+	gameInst->SetPlayerSafeLocation(FVector::ZeroVector); // so this will not be valid in future saves unless set again
 
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsWithInterface(World, USavedActorInterface::StaticClass(), Actors);
@@ -115,7 +125,7 @@ void LoadSaveLibrary::SaveGameFile(FString SaveFile, UWorld* World)
 
 	SaveData << SaveGameData;
 
-	FFileHelper::SaveArrayToFile(SaveData, *SaveFile);
+	FFileHelper::SaveArrayToFile(SaveData, *outPath);
 
 	SaveData.FlushCache();
 	SaveData.Empty();
@@ -125,6 +135,10 @@ void LoadSaveLibrary::OnGameLoadedFixup(UWorld* World)
 {
 	if (BinaryData.Num() == 0)
 	{
+		checkSlow(World->GetFirstPlayerController() != nullptr);
+		AMasteringCharacter* charPawn = Cast<AMasteringCharacter>(World->GetFirstPlayerController()->GetPawn());
+
+		FixupPlayer(World, charPawn);
 		return;
 	}
 
@@ -145,7 +159,7 @@ void LoadSaveLibrary::OnGameLoadedFixup(UWorld* World)
 
 	AMasteringCharacter* Char = nullptr; // if ever more than one, we'll need an array and a map to their inventory
 
-										 // iterate these arrays backwards as we will remove objects as we go, can also use iterators, but RemoveAt is simpler here for now
+	// iterate these arrays backwards as we will remove objects as we go, can also use iterators, but RemoveAt is simpler here for now
 	for (int i = Actors.Num() - 1; i >= 0; --i)
 	{
 		AActor* Actor = Actors[i];
@@ -162,7 +176,9 @@ void LoadSaveLibrary::OnGameLoadedFixup(UWorld* World)
 
 				AMasteringCharacter* Mast = Cast<AMasteringCharacter>(Actor);
 				if (Mast != nullptr)
+				{
 					Char = Mast;
+				}
 
 				Actor->Serialize(Ar);
 				Actor->SetActorTransform(ActorRecord.MyTransform);
@@ -183,30 +199,7 @@ void LoadSaveLibrary::OnGameLoadedFixup(UWorld* World)
 		}
 	}
 
-	// Assuming we found our player character and saved out some inventory, this is where we do its custom serialization and fix-up
-	if (Char != nullptr && SaveGameData.InventoryData.WeaponsArray.Num() > 0)
-	{
-		UMasteringInventory* NewInv = NewObject<UMasteringInventory>(Char, TEXT("PlayerInventory"), RF_Transient);
-
-		Char->SetInventory(NewInv);
-
-		FWeaponProperties propsEquipped;
-		for (FInventoryItemData ItemData : SaveGameData.InventoryData.WeaponsArray)
-		{
-			FWeaponProperties props;
-			props.WeaponClass = FindObject<UClass>(ANY_PACKAGE, *ItemData.WeaponClass);
-			props.InventoryIcon = FindObject<UTexture2D>(ANY_PACKAGE, *ItemData.TextureClass);
-			props.WeaponPower = ItemData.WeaponPower;
-			props.Ammo = ItemData.Ammo;
-
-			if (ItemData.WeaponClass == SaveGameData.InventoryData.CurrentWeapon)
-				propsEquipped = props;
-
-			NewInv->AddWeapon(props);
-		}
-
-		Char->GetInventory()->SelectWeapon(propsEquipped);
-	}
+	FixupPlayer(World, Char);
 
 	// These are actors in our save data, but not in the world, spawn them
 	for (FActorSavedData ActorRecord : ActorDatas)
@@ -235,5 +228,59 @@ void LoadSaveLibrary::OnGameLoadedFixup(UWorld* World)
 	for (auto Actor : Actors)
 	{
 		Actor->Destroy();
+	}
+}
+
+void LoadSaveLibrary::FixupPlayer(UWorld* World, class AMasteringCharacter* Char)
+{
+	UMasteringGameInstance* gameInst = UMasteringGameInstance::GetInstance();
+
+	// Assuming we found our player character and saved out some inventory, this is where we do its custom serialization and fix-up
+	if (Char != nullptr)
+	{
+		if (!gameInst->GetPlayerSafeLocation().IsZero())
+		{
+			Char->SetActorLocation(gameInst->GetPlayerSafeLocation());
+		}
+
+		if (gameInst->ShouldPersistInventory())
+		{
+			UMasteringInventory* NewInv = NewObject<UMasteringInventory>(Char, TEXT("PlayerInventory"), RF_Transient);
+
+			checkf(gameInst->GetInventory() != nullptr, TEXT("Game Instance is trying to persist inventory with no inventory setup!"));
+			NewInv->CopyFromOther(gameInst->GetInventory(), Char);
+
+			Char->SetInventory(NewInv);
+			NewInv->SetupToCurrent();
+		}
+		else if (BinaryData.Num() > 0)
+		{
+			FMemoryReader FromBinary = FMemoryReader(BinaryData, true);
+			FromBinary.Seek(0);
+
+			FGameSavedData SaveGameData;
+			FromBinary << SaveGameData;
+
+			UMasteringInventory* NewInv = NewObject<UMasteringInventory>(Char, TEXT("PlayerInventory"), RF_Transient);
+
+			Char->SetInventory(NewInv);
+
+			FWeaponProperties propsEquipped;
+			for (FInventoryItemData ItemData : SaveGameData.InventoryData.WeaponsArray)
+			{
+				FWeaponProperties props;
+				props.WeaponClass = FindObject<UClass>(ANY_PACKAGE, *ItemData.WeaponClass);
+				props.InventoryIcon = FindObject<UTexture2D>(ANY_PACKAGE, *ItemData.TextureClass);
+				props.WeaponPower = ItemData.WeaponPower;
+				props.Ammo = ItemData.Ammo;
+
+				if (ItemData.WeaponClass == SaveGameData.InventoryData.CurrentWeapon)
+					propsEquipped = props;
+
+				NewInv->AddWeapon(props);
+			}
+
+			Char->GetInventory()->SelectWeapon(propsEquipped);
+		}
 	}
 }

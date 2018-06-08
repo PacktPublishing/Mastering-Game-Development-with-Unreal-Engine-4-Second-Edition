@@ -21,6 +21,8 @@ public:
 
 	static void OnGameLoadedFixup(UWorld* World);
 
+	static void FixupPlayer(UWorld* World, class AMasteringCharacter* Char);
+
 protected:
 	static TArray<uint8> BinaryData;
 };

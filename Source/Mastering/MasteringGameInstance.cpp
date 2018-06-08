@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MasteringGameInstance.h"
+#include "Inventory/MasteringInventory.h"
 
 
 
@@ -24,10 +25,28 @@ void UMasteringGameInstance::Init()
 
 void UMasteringGameInstance::BeginDestroy()
 {
+	ClearData();
 	Super::BeginDestroy();
 }
 
 void UMasteringGameInstance::FinishDestroy()
 {
 	Super::FinishDestroy();
+}
+
+void UMasteringGameInstance::SetPlayerInventory(class UMasteringInventory* Inv)
+{
+	if (PlayerInv == nullptr)
+	{
+		PlayerInv = NewObject<UMasteringInventory>(this, TEXT("PlayerInventory"));
+	}
+
+	PlayerInv->CopyFromOther(Inv);
+}
+
+void UMasteringGameInstance::ClearData()
+{
+	bPersistPlayerInventory = false;
+	PlayerInv = nullptr;
+	PlayerSafeLocation = FVector::ZeroVector;
 }
