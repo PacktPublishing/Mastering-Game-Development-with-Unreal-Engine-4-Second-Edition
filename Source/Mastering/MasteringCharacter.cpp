@@ -8,6 +8,8 @@
 #include "GameFramework/InputSettings.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 #include "MotionControllerComponent.h"
 #include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
 #include "Inventory/MasteringInventory.h"
@@ -289,5 +291,48 @@ void AMasteringCharacter::EquipWeapon(TSubclassOf<class AMasteringWeapon> Weapon
 	{
 		//Attach gun mesh component to skeleton
 		EquippedWeaponActor->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+	}
+}
+
+void AMasteringCharacter::PlayFootstepSound()
+{
+	FVector startPos = GetActorLocation();
+	FVector endPos = startPos - FVector(0.0f, 0.0f, 200.0f); // 2m down
+
+	FCollisionQueryParams queryParams;
+	queryParams.AddIgnoredActor(this);
+	queryParams.bTraceComplex = true;
+	queryParams.bReturnPhysicalMaterial = true;
+	FHitResult hitOut;
+
+	bool bHit = GetWorld()->LineTraceSingleByProfile(hitOut, startPos, endPos, TEXT("IgnoreOnlyPawn"));
+
+	if (bHit)
+	{
+		EPhysicalSurface surfHit = SurfaceType_Default;
+
+		if (hitOut.Component->GetBodyInstance() != nullptr && hitOut.Component->GetBodyInstance()->GetSimplePhysicalMaterial() != nullptr)
+		{
+			surfHit = hitOut.Component->GetBodyInstance()->GetSimplePhysicalMaterial()->SurfaceType;
+		}
+
+		if (hitOut.PhysMaterial != nullptr)
+		{
+			surfHit = hitOut.PhysMaterial->SurfaceType;
+		}
+		USoundCue* cueToPlay = nullptr;
+		for (auto physSound : FootstepSounds)
+		{
+			if (physSound.SurfaceType == surfHit)
+			{
+				cueToPlay = physSound.SoundCue;
+				break;
+			}
+		}
+
+		if (cueToPlay != nullptr)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, cueToPlay, hitOut.Location);
+		}
 	}
 }

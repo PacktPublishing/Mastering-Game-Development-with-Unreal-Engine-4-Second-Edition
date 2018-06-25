@@ -8,6 +8,18 @@
 
 class UInputComponent;
 
+USTRUCT(BlueprintType)
+struct FFootstepSounds
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<EPhysicalSurface> SurfaceType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USoundCue* SoundCue;
+};
+
 UCLASS(config=Game)
 class AMasteringCharacter : public ACharacter
 {
@@ -111,6 +123,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UMasteringInventory *Inventory;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FFootstepSounds> FootstepSounds;
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
@@ -138,5 +153,8 @@ public:
 
 	/** Get this character's inventory */
 	FORCEINLINE class UMasteringInventory* GetInventory() const { return Inventory; }
+
+	UFUNCTION(BlueprintCallable)
+	void PlayFootstepSound();
 };
 
