@@ -2,6 +2,9 @@
 
 #include "MasteringProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Sound/SoundCue.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/SphereComponent.h"
 
 AMasteringProjectile::AMasteringProjectile() 
@@ -33,7 +36,7 @@ AMasteringProjectile::AMasteringProjectile()
 
 void AMasteringProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	// Only add impulse and destroy projectile if we hit a physics
+	// Only add impulse and destroy projectile if we hit physics objects
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL))
 	{
 		AController* controller = GetInstigatorController();
@@ -49,6 +52,29 @@ void AMasteringProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 		else if (Cast<APawn>(OtherActor) != nullptr)
 		{
 			Destroy();
+		}
+
+		// our hit information is for "us" the projectile, so get the other guy's surface type if available.
+		EPhysicalSurface surfType = SurfaceType_Default;
+		if (OtherComp->GetBodyInstance() != nullptr && OtherComp->GetBodyInstance()->GetSimplePhysicalMaterial() != nullptr)
+		{
+			surfType = OtherComp->GetBodyInstance()->GetSimplePhysicalMaterial()->SurfaceType;
+		}
+
+		USoundCue* cueToPlay = nullptr;
+		for (auto physSound : ImpactSounds)
+		{
+			if (physSound.SurfaceType == surfType)
+			{
+				cueToPlay = physSound.SoundCue;
+				break;
+			}
+		}
+
+		const float minVelocity = 1000.0f;
+		if (cueToPlay != nullptr && GetVelocity().Size() > minVelocity)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, cueToPlay, Hit.Location);
 		}
 	}
 }
