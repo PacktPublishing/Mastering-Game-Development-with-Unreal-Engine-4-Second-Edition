@@ -162,13 +162,16 @@ void AMasteringCharacter::SetInventory(UMasteringInventory* Inv)
 
 void AMasteringCharacter::InitializeInventoryHUD()
 {
-	APlayerController* player = CastChecked<APlayerController>(GetController());
+	APlayerController* player = Cast<APlayerController>(GetController());
 
-	AMasteringHUD* HUD = Cast<AMasteringHUD>(player->GetHUD());
-
-	if (HUD != nullptr)
+	if (player != nullptr) // function is called with a non-player controller in simulation in editor
 	{
-		HUD->InitializeInventory(Inventory);
+		AMasteringHUD* HUD = Cast<AMasteringHUD>(player->GetHUD());
+
+		if (HUD != nullptr)
+		{
+			HUD->InitializeInventory(Inventory);
+		}
 	}
 }
 
