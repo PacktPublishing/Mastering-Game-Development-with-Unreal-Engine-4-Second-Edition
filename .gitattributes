@@ -1,1 +1,2 @@
 *.umap filter=lfs diff=lfs merge=lfs -text
+*_BuiltData.uasset filter=lfs diff=lfs merge=lfs -text

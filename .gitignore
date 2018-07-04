@@ -2,6 +2,7 @@ Mastering.sln
 Mastering.VC.db
 .vs/
 Binaries/
+Build/
 DerivedDataCache/
 Intermediate/
 Saved/
