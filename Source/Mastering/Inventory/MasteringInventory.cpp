@@ -2,6 +2,7 @@
 
 #include "MasteringInventory.h"
 #include "MasteringCharacter.h"
+#include "Engine/World.h"
 #include "MasteringWeaponPickup.h"
 
 #define UNLIMITED_AMMO -1
