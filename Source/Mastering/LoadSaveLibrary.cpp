@@ -5,9 +5,12 @@
 #include "Serialization/BufferArchive.h"
 #include "Serialization/MemoryReader.h"
 #include "Misc/Paths.h"
+#include "Misc/FileHelper.h"
 #include "HAL/FileManager.h"
 #include "LoadSaveLibrary.h"
 #include "UI/SavedActorInterface.h"
+#include "Engine/World.h"
+#include "Engine/Texture2d.h"
 #include "MasteringGameInstance.h"
 
 #include "MasteringCharacter.h"
@@ -111,6 +114,7 @@ void LoadSaveLibrary::SaveGameFile(FString SaveFile, UWorld* World)
 				data.WeaponPower = weapon.WeaponPower;
 				data.Ammo = weapon.Ammo;
 				data.TextureClass = weapon.InventoryIcon->GetPathName();
+                
 
 				SaveGameData.InventoryData.WeaponsArray.Add(data);
 			}

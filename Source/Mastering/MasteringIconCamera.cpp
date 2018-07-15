@@ -10,6 +10,9 @@
 #include "Classes/Camera/CameraComponent.h"
 #include "Classes/Kismet/GameplayStatics.h"
 #include "HighResScreenshot.h"
+#include "Engine/World.h"
+#include "Engine/GameViewportClient.h"
+#include "TimerManager.h"
 #include "DrawDebugHelpers.h"
 
 
