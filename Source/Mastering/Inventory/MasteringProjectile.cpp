@@ -76,6 +76,9 @@ void AMasteringProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 		if (cueToPlay != nullptr && GetVelocity().Size() > minVelocity)
 		{
 			UGameplayStatics::PlaySoundAtLocation(this, cueToPlay, Hit.Location);
+
+			FRotator rot =  GetVelocity().ToOrientationRotator();
+			UGameplayStatics::SpawnEmitterAttached(ImpactParticles, GetRootComponent(), NAME_None, FVector::ZeroVector, rot, EAttachLocation::SnapToTargetIncludingScale, true);
 		}
 	}
 }
