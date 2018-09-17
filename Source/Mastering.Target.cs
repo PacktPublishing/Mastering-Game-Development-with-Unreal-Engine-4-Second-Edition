@@ -3,12 +3,12 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class MasteringARTarget : TargetRules
+public class MasteringTarget : TargetRules
 {
-	public MasteringARTarget(TargetInfo Target) : base(Target)
+	public MasteringTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
 
-		ExtraModuleNames.AddRange( new string[] { "MasteringAR" } );
+		ExtraModuleNames.AddRange( new string[] { "Mastering" } );
 	}
 }

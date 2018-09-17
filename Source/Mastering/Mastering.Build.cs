@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class MasteringAR : ModuleRules
+public class Mastering : ModuleRules
 {
-	public MasteringAR(ReadOnlyTargetRules Target) : base(Target)
+	public Mastering(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
