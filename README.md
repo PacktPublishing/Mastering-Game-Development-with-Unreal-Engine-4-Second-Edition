@@ -1,8 +1,8 @@
 # Mastering Game Development with Unreal Engine 4,Second Edition
 
-<a href="https://www.packtpub.com/game-development/mastering-game-development-unreal-engine-4-second-edition?utm_source=github&utm_medium=repository&utm_campaign=9781788991445"><img src="https://www.packtpub.com/sites/default/files/9781788991445.png"></a>
+<a href="https://www.packtpub.com/game-development/mastering-game-development-unreal-engine-4-second-edition?utm_source=github&utm_medium=repository&utm_campaign=9781788991445"><img src="https://www.packtpub.com/sites/default/files/9781788991445.png"  alt="Book Name" height="256px" align="right" ></a>
 
-This is the code repository for [Mastering Game Development with Unreal Engine 4,Second Edition](https://www.packtpub.com/game-development/mastering-game-development-unreal-engine-4-second-edition?utm_source=github&utm_medium=repository&utm_campaign=9781788991445), published by Packt.
+This is the code repository for [Mastering Game Development with Unreal Engine 4, Second Edition](https://www.packtpub.com/game-development/mastering-game-development-unreal-engine-4-second-edition?utm_source=github&utm_medium=repository&utm_campaign=9781788991445), published by Packt.
 
 **Build high-performance AAA games with UE 4**
 
