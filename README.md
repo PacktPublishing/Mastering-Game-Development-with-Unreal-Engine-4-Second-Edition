@@ -45,13 +45,11 @@ With the following software and hardware list you can run all code files present
 
 ### Software and Hardware List
 
-The code, for all chapters, was written in Android Studio 3.2.x.  Here’s a link to the system requirements for Windows, Linux and Mac:
+| Chapter  | Software required                   | OS required                        |
+| -------- | ------------------------------------| -----------------------------------|
+| 1-13     | Microsoft Visual Studio 2015 & 2017 |  Windows, Mac OS X, and Linux (Any)|
+|          | Community Edition                   |                                    |
 
-https://developer.android.com/studio/#Requirements
-
-Here’s the link to download Android Studio:
-
-https://developer.android.com/studio/
 
 
 We also provide a PDF file that has color images of the screenshots/diagrams used in this book. [https://www.packtpub.com/sites/default/files/downloads/9781788991445_ColorImages.pdf](Graphics Bundle Link).
