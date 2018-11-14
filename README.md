@@ -52,7 +52,7 @@ With the following software and hardware list you can run all code files present
 
 
 
-We also provide a PDF file that has color images of the screenshots/diagrams used in this book. [https://www.packtpub.com/sites/default/files/downloads/9781788991445_ColorImages.pdf](Graphics Bundle Link).
+We also provide a PDF file that has color images of the screenshots/diagrams used in this book. [Click here to download it](https://www.packtpub.com/sites/default/files/downloads/9781788991445_ColorImages.pdf).
 
 ### Related products <Other books you may enjoy>
 * Godot Engine Game Development Projects [[Packt]](https://www.packtpub.com/game-development/godot-game-engine-projects) [[Amazon]](https://www.amazon.com/dp/1788831500)
