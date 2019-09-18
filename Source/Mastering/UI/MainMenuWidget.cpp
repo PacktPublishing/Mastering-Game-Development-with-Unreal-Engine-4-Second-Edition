@@ -23,11 +23,11 @@ void UMainMenuWidget::LoadGame(FString SaveFile)
 
 void UMainMenuWidget::SaveGame()
 {
-	FString outPath = FPaths::ProjectSavedDir() + FDateTime::Now().ToString() + TEXT(".sav");
+	FString outName = FDateTime::Now().ToString() + TEXT(".sav");
 
 	UWorld *World = GetWorld();
 
-	LoadSaveLibrary::SaveGameFile(outPath, World);
+	LoadSaveLibrary::SaveGameFile(outName, World);
 
 	Close();
 }
