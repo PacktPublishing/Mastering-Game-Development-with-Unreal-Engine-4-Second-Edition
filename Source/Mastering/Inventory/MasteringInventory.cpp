@@ -116,7 +116,8 @@ void UMasteringInventory::AddWeapon(const FWeaponProperties &Properties)
 	{
 		FWeaponProperties &currentProps = WeaponsArray[foundIndex];
 		checkSlow(Properties.Ammo >= 0 || Properties.Ammo == UNLIMITED_AMMO);
-		currentProps.Ammo += Properties.Ammo;
+		if (Properties.Ammo != UNLIMITED_AMMO)
+			currentProps.Ammo += Properties.Ammo;
 	}
 	else
 	{
