@@ -30,9 +30,9 @@ AMeleeAIController::AMeleeAIController(const FObjectInitializer& ObjectInitializ
 	bAttachToPawn = true;
 }
 
-void AMeleeAIController::Possess(APawn* InPawn)
+void AMeleeAIController::OnPossess(APawn* InPawn)
 {
-	Super::Possess(InPawn);
+	Super::OnPossess(InPawn);
 
 	HomeLocation = GetPawn()->GetNavAgentLocation();
 
@@ -85,14 +85,14 @@ void AMeleeAIController::OnStealthHearingOverlap(UPrimitiveComponent* Overlapped
 
 void AMeleeAIController::OnSightOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	APawn* Owner = GetPawn();
+	APawn* OwnerPawn = GetPawn();
 
-	if (Owner == nullptr || Owner == Other)
+	if (OwnerPawn == nullptr || OwnerPawn == Other)
 	{
 		return;
 	}
 
-	FVector ToTarget = Other->GetActorLocation() - Owner->GetActorLocation();
+	FVector ToTarget = Other->GetActorLocation() - OwnerPawn->GetActorLocation();
 	FVector Facing = GetPawn()->GetActorForwardVector();
 
 	if (SightAngle > 90.0f)
