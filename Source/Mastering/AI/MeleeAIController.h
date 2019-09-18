@@ -21,7 +21,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnTargetChange(class AMasteringCharacter* Target);
 
-	virtual void Possess(APawn* InPawn) override;
+	virtual void OnPossess(APawn* InPawn) override;
 
 	UFUNCTION(BlueprintCallable)
 	class AMasteringCharacter* GetTarget();
