@@ -53,6 +53,8 @@ void AMasteringHUD::DrawHUD()
 		bNeedsInventoryInit = false;
 	}
 
+	InventoryHUD->SetVisibility(ESlateVisibility::Visible);
+
 	Super::DrawHUD();
 
 	// Draw very simple crosshair

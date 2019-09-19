@@ -153,7 +153,6 @@ void LoadSaveLibrary::OnGameLoadedFixup(UWorld* World)
 	FromBinary << SaveGameData;
 
 	FromBinary.FlushCache();
-	BinaryData.Empty();
 	FromBinary.Close();
 
 	TArray<AActor*> Actors;
@@ -233,6 +232,8 @@ void LoadSaveLibrary::OnGameLoadedFixup(UWorld* World)
 	{
 		Actor->Destroy();
 	}
+
+	BinaryData.Empty();
 }
 
 void LoadSaveLibrary::FixupPlayer(UWorld* World, class AMasteringCharacter* Char)
